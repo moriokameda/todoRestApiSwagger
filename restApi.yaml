@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: todoAPI
+  description: todoAPI作成サンプル
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+  - url: 'https'
+tags:
+  - name: todo
+    description: TODOタスク
+paths:
+  /todo:
+    get:
+      tags:
+        - todo
+      summary: todo一覧取得
+      description: todoリストの一覧取得
+      parameters:
+        - in: query
+          name: title
+          description: TODO名
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+    post:
+      tags:
+        - todo
+      summary: 新規登録
+      description: todoの新規登録
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: todoプロパティ
+              properties:
+                title:
+                  $ref: "#/components/schemas/title"
+                deadline:
+                  $ref: '#/components/schemas/deadline'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIResponse'
+  /todo/{id}:
+    get:
+      tags:
+        - todo
+      summary: todo詳細取得
+      description: todo一件取得
+      parameters:
+        - in: path
+          description: todoId
+          required: true
+          name: id
+          schema:
+            $ref: '#/components/schemas/todoId'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+    put:
+      summary: todo更新
+      tags:
+        - todo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: "#/components/schemas/todoId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  $ref: "#/components/schemas/title"
+                deadline:
+                  $ref: "#/components/schemas/deadline"
+                status:
+                  $ref: '#/components/schemas/todoStatus'
+      responses:
+        200:
+          description: OK
+    delete:
+      tags:
+        - todo
+      summary: todo削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            $ref: '#/components/schemas/todoId'
+      responses:
+        204:
+          description: deleted
+components:
+  schemas:
+    todoId:
+      type: integer
+      format: int64
+      description: todoId
+      example: 1
+      nullable: false
+    title:
+      type: string
+      description: todo名
+      nullable: false
+      example: "タスクダーー"
+    deadline:
+      type: string
+      format: 'date-time'
+      nullable: true
+      description: 期限
+    todoStatus:
+      type: string
+      description: ステータス
+      nullable: false
+      enum:
+        - NOT_YET_STARTED
+        - IN_PROGRESS
+        - DONE
+    Todo:
+      type: object
+      description: todo
+      nullable: false
+      properties:
+        id:
+          $ref: '#/components/schemas/todoId'
+        title:
+          $ref: '#/components/schemas/title'
+        deadline:
+          $ref: '#/components/schemas/deadline'
+        status:
+          $ref: '#/components/schemas/todoStatus'
+    APIResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        msg:
+          type: string
+
+
